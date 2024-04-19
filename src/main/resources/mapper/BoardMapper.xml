@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.fastcampus.repository.BoardDao">
+
+<!--  게시물 page로  읽기  -->
+  <select id="selectPosts" parameterType="int" resultType="HashMap">
+    select seq
+          ,title
+          ,username
+          ,registerdate
+          ,viewcount
+    from boardtest
+    limit 10
+    offset #{0}
+  </select>
+
+<!--  게시물 seq == param:bno 하나 읽기  -->
+  <select id="readOne" parameterType="int" resultType="BoardDto">
+    select *
+    from boardtest
+    where seq = #{0}
+  </select>
+
+<!--  게시물 seq == param:bno 조회수 1 증가  -->
+  <update id="increaseViewCount" parameterType="int" >
+    update boardtest
+    set viewcount = viewcount+1
+    where seq = #{0}
+  </update>
+<!-- 게시물 seq == param:bno 글 삭제 -->
+  <delete id="deletePost" parameterType="int">
+    delete from boardtest
+    where seq = #{0}
+  </delete>
+
+  <update id="updatePost" parameterType="BoardDto" >
+
+    update boardtest SET  title = #{title}
+                       ,content = #{content}
+                     where  seq = ${seq};
+  </update>
+
+<!--  게시물 작성하기 위한 저장  -->
+  <insert id="writeOne" parameterType="BoardDto" >
+    insert into boardtest (  title,    username ,   content)
+                values    (#{title}, #{username}, #{content});
+  </insert>
+
+  <!--
+C 쓰기 GET, POST  :: 보여주기, 저장하기
+      select * from boardtest where seq = ??;
+      insert into boardtest (title, username , content) values("", "", "");
+R 읽기 GET        :: 읽어오기
+      select * from boardtest where seq = ??;
+U 수정 GET, PUT   :: 읽어오기, 저장하기
+D 삭제 DEL        :: 삭제하기
+-->
+
+<!--  전체 게시물 숫자  -->
+  <select id="selectCount" resultType="int">
+    select count(*)
+    from boardtest
+  </select>
+</mapper>
